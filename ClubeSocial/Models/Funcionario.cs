@@ -7,6 +7,7 @@ namespace ClubeSocial.Models
 {
     public class Funcionario: Pessoa
     {
-        public int Matricular { get; set; }
+        public int FuncionarioId { get; set; }
+        public IList<HistorioFuncionario> HistorioFuncionarios { get; set; }
     }
 }
