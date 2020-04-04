@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace ClubeSocial.Models
 {
-    public enum Situacao
+    public class Funcionario: Pessoa
     {
-        Avaliacao,
-        Aprovado,
-        Concluido
+        public int Matricular { get; set; }
     }
 }

@@ -5,8 +5,15 @@ using System.Threading.Tasks;
 
 namespace ClubeSocial.Models
 {
-    public class Socio
+    public class Socio: Pessoa
     {
-        public Situacao Situacao { get; set; }
+        public Cartao Cartao { get; set; }
+        public IList<Dependente> Dependentes { get; set; }
+        public IList<Mensalidade> Mensalidades { get; set; }
+    
+        public void BuscaSocioPorNumeroDoCartao()
+        {
+
+        }
     }
 }
