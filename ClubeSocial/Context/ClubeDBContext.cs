@@ -36,7 +36,7 @@ namespace ClubeSocial.Context
             builder.Entity<Cartao>().Property(p => p.ClubeId).IsRequired();
             builder.Entity<Cartao>().Property(p => p.DataVencimento).IsRequired();
             builder.Entity<Cartao>().Property(p => p.Valido).IsRequired();
-            builder.Entity<Cartao>().HasOne(p => p.Socio).WithOne(p => p.Cartao);
+            builder.Entity<Cartao>().HasOne(p => p.Socio).WithOne(p => p.Cartao).HasForeignKey<Socio>(p => p.SocioId);
             builder.Entity<Cartao>().HasOne(p => p.Clube).WithMany(p => p.Cartaos);
 
             builder.Entity<Clube>().ToTable("Clubes", "ClubeDB");
@@ -63,8 +63,8 @@ namespace ClubeSocial.Context
             builder.Entity<Mensalidade>().HasKey(p => p.MensalidadeId);
             builder.Entity<Mensalidade>().Property(p => p.DataMensalidade).IsRequired();
             builder.Entity<Mensalidade>().Property(p => p.DataVencimento).IsRequired();
-            builder.Entity<Mensalidade>().Property(p => p.Valor).IsRequired();
-            builder.Entity<Mensalidade>().Property(p => p.Juros).IsRequired();
+            builder.Entity<Mensalidade>().Property(p => p.Valor).HasColumnType("decimal(18,4)").IsRequired();
+            builder.Entity<Mensalidade>().Property(p => p.Juros).HasColumnType("decimal(18,4)").IsRequired();
             builder.Entity<Mensalidade>().Property(p => p.Pago).IsRequired();
             builder.Entity<Mensalidade>().HasOne(p => p.Socio).WithMany(p => p.Mensalidades);
 
