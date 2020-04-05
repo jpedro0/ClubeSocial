@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ClubeSocial.Repository.Intefaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,19 +11,23 @@ namespace ClubeSocial.Controllers
     [Authorize(Roles = "Funcionario")]
     public class FuncionarioController : Controller
     {
-        public IActionResult Index()
+        private readonly ISocioRepository _socioRepository;
+        public FuncionarioController(ISocioRepository socioRepository)
         {
-            return View();
+            _socioRepository = socioRepository;
         }
+        public IActionResult Index() => View();
 
         public IActionResult ListaSocioNovos()
         {
-            return View();
+            var listasocio = _socioRepository.BuscaSocioPorCartaoNull();
+            return View(listasocio);
         }
 
         public IActionResult ListaMensalidadeAGerar()
         {
-            return View();
+            var listamensalidade = _socioRepository.BuscaSocioPorMensalidadeNullMesAtual();
+            return View(listamensalidade);
         }
 
         public IActionResult GerarCartao()

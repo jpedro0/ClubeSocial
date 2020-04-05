@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace ClubeSocial.Repository.Intefaces
 {
-    public interface IFuncionarioRepository: IRepositoryBase<Funcionario>
+    public interface IDependenteRepository: IRepositoryBase<Dependente>
     {
+        IList<Dependente> BuscaDependentePorSocioEmail(string email);
     }
 }

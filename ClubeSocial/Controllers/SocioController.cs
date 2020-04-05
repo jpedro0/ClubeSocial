@@ -18,30 +18,72 @@ namespace ClubeSocial.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ICandidatoRepository _candidatoRepository;
         private readonly ISocioRepository _socioRepository;
+        private readonly IDependenteRepository _dependenteRepository;
         public SocioController(
             UserManager<IdentityUser> userManager,
             ICandidatoRepository candidatoRepository,
-            ISocioRepository socioRepository)
+            ISocioRepository socioRepository,
+            IDependenteRepository dependenteRepository)
         {
             _userManager = userManager;
             _candidatoRepository = candidatoRepository;
             _socioRepository = socioRepository;
+            _dependenteRepository = dependenteRepository;
         }
 
         [HttpGet]
         [Authorize(Roles = "Socio")]
-        public IActionResult Index() => View();
+        public async Task<IActionResult> Index()
+        {
+            var usuario = await _userManager.GetUserAsync(User);
+            var claims = await _userManager.GetClaimsAsync(usuario);
+            if (claims.Any(p => p.Equals(new Claim("socio", "andamento"))))
+                return View(nameof(SocioAndamento));
+            else if (claims.Any(p => p.Equals(new Claim("socio", "dependentes"))))
+                return View(nameof(ListarDependente));
+
+            return View();
+        }
+
+        [HttpGet]
+        [Authorize(Policy = "Socio Andamento")]
+        public IActionResult SocioAndamento() => View();
 
         [HttpGet]
         [Authorize(Roles = "Candidato")]
         public IActionResult EsperaCandidato() => View();
 
         [HttpGet]
-        [AllowAnonymous]
-        public IActionResult Candidato()
+        [Authorize(Policy = "Associar Dependente")]
+        public async Task<IActionResult> ListarDependente()
+        {
+            var usuario = await _userManager.GetUserAsync(User);
+            var listaDenpendente = _dependenteRepository.BuscaDependentePorSocioEmail(usuario.Email);
+            return View(listaDenpendente);
+        }
+
+        [HttpGet]
+        [Authorize(Policy = "Associar Dependente")]
+        public IActionResult AssociarDependente() 
         {
             return View();
         }
+
+        [HttpPost]
+        [Authorize(Policy = "Associar Dependente")]
+        [ValidateAntiForgeryToken]
+        public IActionResult AssociarDependente(Dependente dependente)
+        {
+            if (ModelState.IsValid)
+            {
+                _dependenteRepository.Add(dependente);
+            }
+            return View(nameof(ListarDependente));
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Candidato() => View();
 
         [HttpPost]
         [AllowAnonymous]
@@ -82,6 +124,7 @@ namespace ClubeSocial.Controllers
             {
                 await _userManager.RemoveFromRolesAsync(usuario, new string[] { "Candidato" });
                 await _userManager.AddToRoleAsync(usuario, "Socio");
+                await _userManager.AddClaimAsync(usuario, new Claim("socio", "andamento"));
                 candidato.Situacao = Situacao.Aprovado;
                 _candidatoRepository.Update(candidato);
                 var socio = new Socio

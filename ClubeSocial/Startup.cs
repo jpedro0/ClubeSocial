@@ -62,11 +62,18 @@ namespace ClubeSocial
                 options.SlidingExpiration = true;
             });
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Socio Andamento", policy => policy.RequireClaim("socio", "andamento"));
+                options.AddPolicy("Associar Dependente", policy => policy.RequireClaim("socio", "dependentes"));
+            });
+
             services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
             services.AddScoped<ICandidatoRepository, CandidatoRepository>();
             services.AddScoped<IClubeRepository, ClubeRepository>();
             services.AddScoped<ISocioRepository, SocioRepository>();
             services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
+            services.AddScoped<IDependenteRepository, DependenteRepository>();
 
         }
 
@@ -86,9 +93,7 @@ namespace ClubeSocial
             }
             app.UseStaticFiles();
 
-            CriarRoles(serviceProvider).Wait();
-            CriarAdministradorClube(serviceProvider).Wait();
-            CriarFuncionarioClube(serviceProvider).Wait();
+            MenuClubeSocial(serviceProvider).Wait();
 
             app.UseRouting();
 
@@ -103,90 +108,92 @@ namespace ClubeSocial
             });
         }
 
-        public async Task CriarRoles(IServiceProvider serviceProvider)
-        {
-            using (var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>())
-            {
-                var roles = roleManager.Roles.ToList();
-
-                if (!roles.Any())
-                {
-                    string[] rolesNames = { "Candidato", "Socio", "Clube", "Funcionario" };
-                    foreach (var namesRole in rolesNames)
-                    {
-                        var roleExist = await roleManager.RoleExistsAsync(namesRole);
-                        if (!roleExist)
-                        {
-                            var role = new IdentityRole(namesRole);
-                            await roleManager.CreateAsync(role);
-                        }
-                    }
-                }
-            }
-        }
-
-        public async Task CriarAdministradorClube(IServiceProvider serviceProvider)
+        public async Task MenuClubeSocial(IServiceProvider serviceProvider) 
         {
             using (var clubeRepository = serviceProvider.GetRequiredService<IClubeRepository>())
+            using (var funcionarioRepository = serviceProvider.GetRequiredService<IFuncionarioRepository>())
             using (var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>())
+            using (var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>())
             {
-                var userexists = await userManager.FindByEmailAsync("clube@social.com");
+                await CriarRoles(roleManager);
+                await CriarAdministradorClube(clubeRepository, userManager);
+                await CriarFuncionarioClube(funcionarioRepository, userManager);
+            }
+        }
 
-                if (userexists == null)
+        public async Task CriarRoles(RoleManager<IdentityRole> roleManager)
+        {
+            var roles = roleManager.Roles.ToList();
+
+            if (!roles.Any())
+            {
+                string[] rolesNames = { "Candidato", "Socio", "Clube", "Funcionario" };
+                foreach (var namesRole in rolesNames)
                 {
-                    Clube clube = new Clube
+                    var roleExist = await roleManager.RoleExistsAsync(namesRole);
+                    if (!roleExist)
                     {
-                        Email = "clube@social.com",
-                        Decricao = "Clube Social TOP",
-                        Nome = "ClubeSocial",
-                        DataCadastro = DateTime.Now
-                    };
-
-                    IdentityUser identityUser = new IdentityUser
-                    {
-                        UserName = clube.Nome,
-                        Email = clube.Email
-                    };
-
-                    clubeRepository.Add(clube);
-                    var resultregisteraccount = userManager.CreateAsync(identityUser, "123456").Result;
-                    if (resultregisteraccount.Succeeded)
-                    {
-                        await userManager.AddToRoleAsync(identityUser, "Clube");
+                        var role = new IdentityRole(namesRole);
+                        await roleManager.CreateAsync(role);
                     }
                 }
             }
         }
 
-        public async Task CriarFuncionarioClube(IServiceProvider serviceProvider)
+        public async Task CriarAdministradorClube(IClubeRepository clubeRepository, UserManager<IdentityUser> userManager)
         {
-            using (var funcionarioRepository = serviceProvider.GetRequiredService<IFuncionarioRepository>())
-            using (var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>())
+            var userexists = await userManager.FindByEmailAsync("clube@social.com");
+
+            if (userexists == null)
             {
-                var userexists = await userManager.FindByEmailAsync("clube@social.com");
-
-                if (userexists == null)
+                Clube clube = new Clube
                 {
-                    Funcionario funcionario = new Funcionario
-                    {
-                        Email = "funcionario@clubesocial.com",
-                        DataNacimento = DateTime.Now,
-                        Nome = "Funcionario",
-                        Pelido = "Funcionario Teste"
-                    };
+                    Email = "clube@social.com",
+                    Decricao = "Clube Social TOP",
+                    Nome = "ClubeSocial",
+                    DataCadastro = DateTime.Now
+                };
 
-                    IdentityUser identityUser = new IdentityUser
-                    {
-                        UserName = funcionario.Nome,
-                        Email = funcionario.Email
-                    };
+                IdentityUser identityUser = new IdentityUser
+                {
+                    UserName = clube.Nome,
+                    Email = clube.Email
+                };
 
-                    funcionarioRepository.Add(funcionario);
-                    var resultregisteraccount = userManager.CreateAsync(identityUser, "123456").Result;
-                    if (resultregisteraccount.Succeeded)
-                    {
-                        await userManager.AddToRoleAsync(identityUser, "Funcionario");
-                    }
+                clubeRepository.Add(clube);
+                var resultregisteraccount = userManager.CreateAsync(identityUser, "123456").Result;
+                if (resultregisteraccount.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(identityUser, "Clube");
+                }
+            }
+        }
+
+        public async Task CriarFuncionarioClube(IFuncionarioRepository funcionarioRepository, UserManager<IdentityUser> userManager)
+        {
+            var userexists = await userManager.FindByEmailAsync("funcionario@clubesocial.com");
+
+            if (userexists == null)
+            {
+                Funcionario funcionario = new Funcionario
+                {
+                    Email = "funcionario@clubesocial.com",
+                    DataNacimento = DateTime.Now,
+                    Nome = "Funcionario",
+                    Pelido = "Funcionario Teste"
+                };
+
+                IdentityUser identityUser = new IdentityUser
+                {
+                    UserName = funcionario.Nome,
+                    Email = funcionario.Email
+                };
+
+                funcionarioRepository.Add(funcionario);
+                var resultregisteraccount = userManager.CreateAsync(identityUser, "123456").Result;
+                if (resultregisteraccount.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(identityUser, "Funcionario");
                 }
             }
         }

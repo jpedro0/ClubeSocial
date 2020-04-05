@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewData["Title"] = "Ações de Funcionario";
+}
+<h1 class="text-center">Ações de Funcionario</h1>
+<br />
+<div class="row">
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Lista Socio Novos</h5>
+                <p class="card-text">Lista socio novos no cluber.</p>
+                <a asp-action="ListaSocioNovos" asp-controller="Funcionario" class="btn btn-primary">Ver listar</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Lista Mensalidade</h5>
+                <p class="card-text">Lista Mensalidade a gerar.</p>
+                <a asp-action="ListaMensalidadeAGerar" asp-controller="Funcionario" class="btn btn-primary">Ver listar</a>
+            </div>
+        </div>
+    </div>
+</div>
