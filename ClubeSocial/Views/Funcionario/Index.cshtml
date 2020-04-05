@@ -5,7 +5,7 @@
 <h1 class="text-center">Ações de Funcionario</h1>
 <br />
 <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-4">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Lista Socio Novos</h5>
@@ -14,12 +14,21 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-4">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Lista Mensalidade</h5>
                 <p class="card-text">Lista Mensalidade a gerar.</p>
                 <a asp-action="ListaMensalidadeAGerar" asp-controller="Funcionario" class="btn btn-primary">Ver listar</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Quitar Mensalidade</h5>
+                <p class="card-text">Quitar Mensalidade de um socio.</p>
+                <a asp-action="QuitarMensalidade" asp-controller="Funcionario" class="btn btn-primary">Ver listar</a>
             </div>
         </div>
     </div>

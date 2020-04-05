@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using ClubeSocial.Models;
 using ClubeSocial.Repository.Intefaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClubeSocial.Controllers
@@ -11,10 +14,23 @@ namespace ClubeSocial.Controllers
     [Authorize(Roles = "Funcionario")]
     public class FuncionarioController : Controller
     {
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly ISocioRepository _socioRepository;
-        public FuncionarioController(ISocioRepository socioRepository)
+        private readonly ICartaoRepository _cartaoRepository;
+        private readonly IMensalidadeRepository _mensalidadeRepository;
+        private readonly IFuncionarioRepository _funcionarioRepository;
+        public FuncionarioController(
+            ISocioRepository socioRepository,
+            UserManager<IdentityUser> userManager,
+            ICartaoRepository cartaoRepository,
+            IMensalidadeRepository mensalidadeRepository,
+            IFuncionarioRepository funcionarioRepository)
         {
+            _cartaoRepository = cartaoRepository;
             _socioRepository = socioRepository;
+            _userManager = userManager;
+            _mensalidadeRepository = mensalidadeRepository;
+            _funcionarioRepository = funcionarioRepository;
         }
         public IActionResult Index() => View();
 
@@ -30,19 +46,86 @@ namespace ClubeSocial.Controllers
             return View(listamensalidade);
         }
 
-        public IActionResult GerarCartao()
+        public async Task<IActionResult> GerarCartao(int id)
         {
-            return View();
+            var socio = _socioRepository.BuscaSocioPorId(id);
+            var usuario = await _userManager.FindByEmailAsync(socio.Email);
+            if (usuario != null)
+            {
+                await _userManager.RemoveClaimAsync(usuario, new Claim("socio", "andamento"));
+                await _userManager.AddClaimAsync(usuario, new Claim("socio", "dependentes"));
+                Cartao cartao = new Cartao
+                {
+                    NumeroDoCartao = 345344553,
+                    Nome = socio.Nome,
+                    ClubeId = 1,
+                    DataVencimento = DateTime.Now,
+                    Valido = true,
+                    SocioId = socio.SocioId
+                };
+                _cartaoRepository.Add(cartao);
+                return Json(new { mensagem = "Concluindo" });
+            }
+            return Json(new { mensagem = "Erro" });
         }
 
-        public IActionResult GerarMensalidade()
+        public async Task<IActionResult> GerarMensalidade(int id)
         {
-            return View();
+            var usuarioFuncionario = await _userManager.GetUserAsync(User);
+            var funcionario = _funcionarioRepository.BuscaFuncionarioPorEmail(usuarioFuncionario.Email);
+            var socio = _socioRepository.BuscaSocioPorId(id);
+            var usuario = await _userManager.FindByEmailAsync(socio.Email);
+            if (usuario != null)
+            {
+                Mensalidade mensalidade = new Mensalidade
+                {
+                    DataMensalidade = DateTime.Now,
+                    DataVencimento = DateTime.Now,
+                    Valor = 200,
+                    Pago = false,
+                    SocioId = socio.SocioId,
+                    HistorioFuncionarios = new HistorioFuncionario[] 
+                    {
+                        new HistorioFuncionario
+                        {
+                            Descricao = "Criacao da Mensalidade",
+                            Funcionario = funcionario
+                        },
+                    }
+                };
+                _mensalidadeRepository.Add(mensalidade);
+                return Json(new { mensagem = "Concluindo" });
+            }
+            return Json(new { mensagem = "Erro" });
         }
 
-        public IActionResult QuitarMensalidade()
+        public IActionResult BuscaMensalidade(int? numeroCartao = null)
         {
-            return View();
+            Cartao cartao;
+            if (true)
+                cartao = _cartaoRepository.BuscaCartaoPorNumeroCartao(numeroCartao.Value);
+
+            return View(cartao);
         }
+
+        public async Task<IActionResult> QuitarMensalidade(int id)
+        {
+            var usuarioFuncionario = await _userManager.GetUserAsync(User);
+            var funcionario = _funcionarioRepository.BuscaFuncionarioPorEmail(usuarioFuncionario.Email);
+            var mensalidade = _mensalidadeRepository.BuscaMensalidadePorId(id);
+            if (mensalidade != null)
+            {
+                mensalidade.Pago = true;
+                mensalidade.HistorioFuncionarios.Add(new HistorioFuncionario 
+                {
+                    Descricao = "Mensalidade Paga",
+                    Funcionario = funcionario
+                });
+                _mensalidadeRepository.Update(mensalidade);
+                return Json(new { mensagem = "Concluindo" });
+            }
+            return Json(new { mensagem = "Erro" });
+        }
+
     }
 }

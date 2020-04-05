@@ -1,0 +1,105 @@
+﻿@model Cartao
+
+@{
+    ViewData["Title"] = "BuscaMensalidade";
+}
+
+<h1>BuscaMensalidade</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<div>
+    <input type="number" name="numeroCartao" id="numeroCartao" />
+    <button id="Enviar">Enviar</button>
+</div>
+@if (Model != null && Model.Socio != null && Model.Socio.Mensalidades.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    MensalidadeId
+                </th>
+                <th>
+                    DataMensalidade
+                </th>
+                <th>
+                    DataVencimento
+                </th>
+                <th>
+                    DataPagamento
+                </th>
+                <th>
+                    Valor
+                </th>
+                <th>
+                    Juros
+                </th>
+                <th>
+                    Pago
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody  id="conteinerTBody">
+            @foreach (var item in Model.Socio.Mensalidades)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MensalidadeId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DataMensalidade)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DataVencimento)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DataPagamento)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Valor)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Juros)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Pago)
+                    </td>
+                    <td>
+                        <button class="btn btn-block btn-primary" data-socioid="@item.SocioId">Quitar Mensalidade</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@section Scripts{
+    <script>
+        document.getElementById('Enviar')
+            .addEventListener('click', async (event) => {
+                const numeroCartao = document.getElementById('numeroCartao').value;
+                if (numeroCartao != null || numeroCartao != undefined) {
+                    window.location.href = `Funcionario/BuscaMensalidade?numeroCartao=${numeroCartao}`;
+                }
+            });
+
+        document.getElementById('conteinerTBody')
+            .addEventListener('click', async (event) => {
+                const element = event.target;
+                if (element.LocaNome = 'button') {
+                    const id = element.dataset.socioid;
+                    await BuscaAtualizar(id);
+                    element.parentNode.remove();
+                }
+            });
+
+        async function BuscaAtualizar(id) {
+            if (id != null || id != undefined) {
+                const result = await $.getJSON('/funcionario/QuitarMensalidade', { id: id }, result => result);
+                alert(result.mensagem);
+            }
+        }
+    </script>
+}

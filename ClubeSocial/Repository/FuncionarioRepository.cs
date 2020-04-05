@@ -13,5 +13,9 @@ namespace ClubeSocial.Repository
         public FuncionarioRepository(ClubeDBContext context) : base(context)
         {
         }
+        public Funcionario BuscaFuncionarioPorEmail(string email)
+        {
+            return DbSet.FirstOrDefault(p => p.Email == email);
+        }
     }
 }

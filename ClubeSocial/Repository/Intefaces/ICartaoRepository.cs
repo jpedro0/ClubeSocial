@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace ClubeSocial.Repository.Intefaces
 {
-    public interface IFuncionarioRepository: IRepositoryBase<Funcionario>
+    public interface ICartaoRepository: IRepositoryBase<Cartao>
     {
-        Funcionario BuscaFuncionarioPorEmail(string email);
+        Cartao BuscaCartaoPorNumeroCartao(int numeroCartao);
     }
 }

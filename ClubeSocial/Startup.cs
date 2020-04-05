@@ -74,6 +74,8 @@ namespace ClubeSocial
             services.AddScoped<ISocioRepository, SocioRepository>();
             services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
             services.AddScoped<IDependenteRepository, DependenteRepository>();
+            services.AddScoped<ICartaoRepository, CartaoRepository>();
+            services.AddScoped<IMensalidadeRepository, MensalidadeRepository>();
 
         }
 
