@@ -66,6 +66,7 @@ namespace ClubeSocial
             services.AddScoped<ICandidatoRepository, CandidatoRepository>();
             services.AddScoped<IClubeRepository, ClubeRepository>();
             services.AddScoped<ISocioRepository, SocioRepository>();
+            services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
 
         }
 
@@ -87,6 +88,7 @@ namespace ClubeSocial
 
             CriarRoles(serviceProvider).Wait();
             CriarAdministradorClube(serviceProvider).Wait();
+            CriarFuncionarioClube(serviceProvider).Wait();
 
             app.UseRouting();
 
@@ -151,6 +153,39 @@ namespace ClubeSocial
                     if (resultregisteraccount.Succeeded)
                     {
                         await userManager.AddToRoleAsync(identityUser, "Clube");
+                    }
+                }
+            }
+        }
+
+        public async Task CriarFuncionarioClube(IServiceProvider serviceProvider)
+        {
+            using (var funcionarioRepository = serviceProvider.GetRequiredService<IFuncionarioRepository>())
+            using (var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>())
+            {
+                var userexists = await userManager.FindByEmailAsync("clube@social.com");
+
+                if (userexists == null)
+                {
+                    Funcionario funcionario = new Funcionario
+                    {
+                        Email = "funcionario@clubesocial.com",
+                        DataNacimento = DateTime.Now,
+                        Nome = "Funcionario",
+                        Pelido = "Funcionario Teste"
+                    };
+
+                    IdentityUser identityUser = new IdentityUser
+                    {
+                        UserName = funcionario.Nome,
+                        Email = funcionario.Email
+                    };
+
+                    funcionarioRepository.Add(funcionario);
+                    var resultregisteraccount = userManager.CreateAsync(identityUser, "123456").Result;
+                    if (resultregisteraccount.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(identityUser, "Funcionario");
                     }
                 }
             }
