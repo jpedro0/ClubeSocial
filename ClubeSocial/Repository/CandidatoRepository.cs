@@ -13,5 +13,17 @@ namespace ClubeSocial.Repository
         public CandidatoRepository(ClubeDBContext context) : base(context)
         {
         }
+
+        public Candidato BuscaCandidatoPorId(int id)
+        {
+            return DbSet.First(p => p.CandidatoId == id);
+        }
+
+        public IList<Candidato> BuscaTodosCandidatoEmAvaliacao()
+        {
+            return DbSet
+                .Where(p => p.Situacao.Equals(Situacao.Avaliacao))
+                .ToList();
+        }
     }
 }

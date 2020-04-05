@@ -7,6 +7,7 @@ namespace ClubeSocial.Models
 {
     public class Cartao
     {
+        public int CartaoId { get; set; }
         public int NumeroDoCartao { get; set; }
         public string Nome { get; set; }
         public int ClubeId { get; set; }

@@ -42,7 +42,7 @@ namespace ClubeSocial.Controllers
 
                 var result =
                     await _signInManager.PasswordSignInAsync(
-                         model.Login,
+                         usuario.UserName,
                          model.Senha,
                          model.Salvar,
                          lockoutOnFailure: true);
@@ -109,6 +109,7 @@ namespace ClubeSocial.Controllers
             }
             return View();
         }
+
 
         private async Task<IActionResult> ValidaConta(IdentityUser usuario)
         {

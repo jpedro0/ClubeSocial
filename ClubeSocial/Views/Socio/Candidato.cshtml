@@ -6,46 +6,53 @@
 <div class="align-items-center">
     <h1 class="text-center login-title">Cluber Social</h1>
     <div class="account-wall">
-        <form asp-controller="Conta" asp-action="Login" class="form-signin">
+        <form asp-controller="Socio" asp-action="Candidato" class="form-signin">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div asp-validation-summary="ModelOnly"></div>
-            <div class="input-group mb-3">
+            <div class="input-group mb-3 mt-2">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon1">Login: Email</span>
                 </div>
                 <input asp-for="Candidato.Email" class="form-control" aria-label="Email" aria-describedby="basic-addon1" placeholder="Email" required />
             </div>
-            <div class="input-group mb-3">
+            <span asp-validation-for="Candidato.Email" class="text-danger"></span>
+            <div class="input-group mb-3 mt-2">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon2">Senha</span>
                 </div>
                 <input asp-for="Senha" class="form-control" placeholder="Senha" aria-label="Senha" aria-describedby="basic-addon2" required>
             </div>
-            <div class="input-group mb-3">
+            <span asp-validation-for="Senha" class="text-danger"></span>
+            <div class="input-group mb-3 mt-2">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon3">Confimar Senha</span>
                 </div>
                 <input asp-for="ConfimarSenha" class="form-control" placeholder="ConfimarSenha" aria-label="ConfimarSenha" aria-describedby="basic-addon3" required>
             </div>
+            <span asp-validation-for="ConfimarSenha" class="text-danger"></span>
             <h3 class="text-center login-title">Imformação Pessoal</h3>
-            <div class="input-group mb-3">
+            <div class="input-group mb-3 mt-2">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon4">Nome</span>
                 </div>
                 <input asp-for="Candidato.Nome" class="form-control" placeholder="Nome" aria-label="Nome" aria-describedby="basic-addon4" required>
             </div>
-            <div class="input-group mb-5">
+            <span asp-validation-for="Candidato.Nome" class="text-danger"></span>
+            <div class="input-group mb-3 mt-2">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon2">Pelido</span>
                 </div>
                 <input asp-for="Candidato.Pelido" class="form-control" placeholder="Pelido" aria-label="Pelido" aria-describedby="basic-addon5" required>
             </div>
-            <div class="input-group mb-3">
+            <span asp-validation-for="Candidato.Pelido" class="text-danger"></span>
+            <div class="input-group mb-3 mt-2">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon6">Data Nacimento</span>
                 </div>
-                <input asp-for="Candidato.DataNacimento" class="form-control" placeholder="DataNacimento" aria-label="DataNacimento" aria-describedby="basic-addon6" required>
+                <input asp-for="Candidato.DataNacimento" type="date" class="form-control" placeholder="DataNacimento" aria-label="DataNacimento" aria-describedby="basic-addon6" required>
             </div>
+            <span asp-validation-for="Candidato.DataNacimento" class="text-danger"></span>
+
             <input asp-for="Candidato.ClubeId" value="1" class="invisible" />
             <button class="btn btn-lg btn-primary btn-block" type="submit">
                 Cadastrar
@@ -53,3 +60,7 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

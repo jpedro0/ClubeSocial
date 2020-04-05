@@ -5,7 +5,7 @@
 <div class="align-items-center">
     <h1 class="text-center login-title">Cluber Social</h1>
     <div class="account-wall">
-        <form asp-controller="Conta" asp-action="Login" class="form-signin">
+        <form asp-controller="Conta" asp-action="Login" method="post" class="form-signin">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div asp-validation-summary="ModelOnly"></div>
             <div class="input-group mb-3">
@@ -30,5 +30,5 @@
             <a asp-action="TrocaSenha" asp-controller="Conta" class="pull-right need-help">Recuperar Senha </a><span class="clearfix"></span>
         </form>
     </div>
-    <a href="#" class="text-center new-account">Seja socio do Clube</a>
+    <a asp-action="Candidato" asp-controller="Socio" class="text-center new-account">Seja socio do Clube</a>
 </div>

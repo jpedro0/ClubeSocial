@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace ClubeSocial.Repository.Intefaces
 {
-    public interface ICandidatoRepository: IRepositoryBase<Candidato>
+    public interface ISocioRepository : IRepositoryBase<Socio>
     {
-        Candidato BuscaCandidatoPorId(int id);
-        IList<Candidato> BuscaTodosCandidatoEmAvaliacao();
+        Socio BuscaSocioPorId(int id);
     }
 }

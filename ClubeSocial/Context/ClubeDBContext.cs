@@ -25,18 +25,18 @@ namespace ClubeSocial.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Candidato>().ToTable("Candidatos", "ClubeDB");
-            builder.Entity<Candidato>().HasKey(p => p.ClubeId);
+            builder.Entity<Candidato>().HasKey(p => p.CandidatoId);
             builder.Entity<Candidato>().Property(p => p.Nome).IsRequired();
             builder.Entity<Candidato>().Property(p => p.DataNacimento).IsRequired();
             builder.Entity<Candidato>().HasOne(p => p.Clube).WithMany(p => p.Candidatos);
 
             builder.Entity<Cartao>().ToTable("Cartoes", "ClubeDB");
-            builder.Entity<Cartao>().HasKey(p => p.NumeroDoCartao);
+            builder.Entity<Cartao>().HasKey(p => p.CartaoId);
             builder.Entity<Cartao>().Property(p => p.Nome).IsRequired();
             builder.Entity<Cartao>().Property(p => p.ClubeId).IsRequired();
             builder.Entity<Cartao>().Property(p => p.DataVencimento).IsRequired();
+            builder.Entity<Cartao>().Property(p => p.NumeroDoCartao).IsRequired();
             builder.Entity<Cartao>().Property(p => p.Valido).IsRequired();
-            builder.Entity<Cartao>().HasOne(p => p.Socio).WithOne(p => p.Cartao).HasForeignKey<Socio>(p => p.SocioId);
             builder.Entity<Cartao>().HasOne(p => p.Clube).WithMany(p => p.Cartaos);
 
             builder.Entity<Clube>().ToTable("Clubes", "ClubeDB");
@@ -46,7 +46,7 @@ namespace ClubeSocial.Context
             builder.Entity<Clube>().Property(p => p.DataCadastro).IsRequired();
 
             builder.Entity<Dependente>().ToTable("Dependetes", "ClubeDB");
-            builder.Entity<Dependente>().HasKey(p => p.SocioId);
+            builder.Entity<Dependente>().HasKey(p => p.DependenteId);
             builder.Entity<Dependente>().Property(p => p.Nome).IsRequired();
             builder.Entity<Dependente>().Property(p => p.DataNacimento).IsRequired();
             builder.Entity<Dependente>().HasOne(p => p.Socio).WithMany(p => p.Dependentes);
@@ -72,6 +72,7 @@ namespace ClubeSocial.Context
             builder.Entity<Socio>().HasKey(p => p.SocioId);
             builder.Entity<Socio>().Property(p => p.Nome).IsRequired();
             builder.Entity<Socio>().Property(p => p.DataNacimento).IsRequired();
+            builder.Entity<Socio>().HasOne(p => p.Cartao).WithOne(p => p.Socio).HasForeignKey<Cartao>(p => p.SocioId);
 
             base.OnModelCreating(builder);
 

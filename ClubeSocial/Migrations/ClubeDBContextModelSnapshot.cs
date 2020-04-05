@@ -21,16 +21,20 @@ namespace ClubeSocial.Migrations
 
             modelBuilder.Entity("ClubeSocial.Models.Candidato", b =>
                 {
-                    b.Property<int>("ClubeId")
+                    b.Property<int>("CandidatoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ClubeId1")
+                    b.Property<int>("ClubeId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DataNacimento")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -42,16 +46,16 @@ namespace ClubeSocial.Migrations
                     b.Property<int>("Situacao")
                         .HasColumnType("int");
 
-                    b.HasKey("ClubeId");
+                    b.HasKey("CandidatoId");
 
-                    b.HasIndex("ClubeId1");
+                    b.HasIndex("ClubeId");
 
                     b.ToTable("Candidatos","ClubeDB");
                 });
 
             modelBuilder.Entity("ClubeSocial.Models.Cartao", b =>
                 {
-                    b.Property<int>("NumeroDoCartao")
+                    b.Property<int>("CartaoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -66,15 +70,21 @@ namespace ClubeSocial.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NumeroDoCartao")
+                        .HasColumnType("int");
+
                     b.Property<int>("SocioId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Valido")
                         .HasColumnType("bit");
 
-                    b.HasKey("NumeroDoCartao");
+                    b.HasKey("CartaoId");
 
                     b.HasIndex("ClubeId");
+
+                    b.HasIndex("SocioId")
+                        .IsUnique();
 
                     b.ToTable("Cartoes","ClubeDB");
                 });
@@ -93,6 +103,9 @@ namespace ClubeSocial.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -104,13 +117,17 @@ namespace ClubeSocial.Migrations
 
             modelBuilder.Entity("ClubeSocial.Models.Dependente", b =>
                 {
-                    b.Property<int>("SocioId")
+                    b.Property<int>("DependenteId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("DataNacimento")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -119,12 +136,12 @@ namespace ClubeSocial.Migrations
                     b.Property<string>("Pelido")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SocioId1")
+                    b.Property<int>("SocioId")
                         .HasColumnType("int");
 
-                    b.HasKey("SocioId");
+                    b.HasKey("DependenteId");
 
-                    b.HasIndex("SocioId1");
+                    b.HasIndex("SocioId");
 
                     b.ToTable("Dependetes","ClubeDB");
                 });
@@ -138,6 +155,10 @@ namespace ClubeSocial.Migrations
 
                     b.Property<DateTime>("DataNacimento")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -207,13 +228,16 @@ namespace ClubeSocial.Migrations
             modelBuilder.Entity("ClubeSocial.Models.Socio", b =>
                 {
                     b.Property<int>("SocioId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CartaoId")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("DataNacimento")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -427,7 +451,7 @@ namespace ClubeSocial.Migrations
                 {
                     b.HasOne("ClubeSocial.Models.Clube", "Clube")
                         .WithMany("Candidatos")
-                        .HasForeignKey("ClubeId1")
+                        .HasForeignKey("ClubeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -439,13 +463,19 @@ namespace ClubeSocial.Migrations
                         .HasForeignKey("ClubeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("ClubeSocial.Models.Socio", "Socio")
+                        .WithOne("Cartao")
+                        .HasForeignKey("ClubeSocial.Models.Cartao", "SocioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ClubeSocial.Models.Dependente", b =>
                 {
                     b.HasOne("ClubeSocial.Models.Socio", "Socio")
                         .WithMany("Dependentes")
-                        .HasForeignKey("SocioId1")
+                        .HasForeignKey("SocioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -470,15 +500,6 @@ namespace ClubeSocial.Migrations
                     b.HasOne("ClubeSocial.Models.Socio", "Socio")
                         .WithMany("Mensalidades")
                         .HasForeignKey("SocioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ClubeSocial.Models.Socio", b =>
-                {
-                    b.HasOne("ClubeSocial.Models.Cartao", "Cartao")
-                        .WithOne("Socio")
-                        .HasForeignKey("ClubeSocial.Models.Socio", "SocioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

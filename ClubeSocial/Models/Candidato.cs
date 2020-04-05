@@ -8,6 +8,7 @@ namespace ClubeSocial.Models
 {
     public class Candidato: Pessoa
     {
+        public int CandidatoId { get; set; }
         public Situacao Situacao { get; set; }
         [Required]
         public int ClubeId { get; set; }

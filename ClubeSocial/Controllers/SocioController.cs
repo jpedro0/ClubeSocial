@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using ClubeSocial.Models;
 using ClubeSocial.Models.ViewModels;
@@ -16,17 +17,20 @@ namespace ClubeSocial.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ICandidatoRepository _candidatoRepository;
+        private readonly ISocioRepository _socioRepository;
         public SocioController(
             UserManager<IdentityUser> userManager,
-            ICandidatoRepository candidatoRepository)
+            ICandidatoRepository candidatoRepository,
+            ISocioRepository socioRepository)
         {
             _userManager = userManager;
             _candidatoRepository = candidatoRepository;
+            _socioRepository = socioRepository;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+
+        [HttpGet]
+        [Authorize(Roles = "Socio")]
+        public IActionResult Index() => View();
 
         [HttpGet]
         [Authorize(Roles = "Candidato")]
@@ -55,12 +59,11 @@ namespace ClubeSocial.Controllers
                 var usuario = await _userManager.FindByEmailAsync(model.Candidato.Email);
                 if (usuario == null)
                 {
+                    _candidatoRepository.Add(model.Candidato);
                     IdentityResult result = await _userManager.CreateAsync(user, model.Senha);
                     if (result.Succeeded)
                     {
-                        await _userManager
-                            .AddToRoleAsync(user, "Candidato");
-                        _candidatoRepository.Add(model.Candidato);
+                        await _userManager.AddToRoleAsync(user, "Candidato");
                         return RedirectToAction(nameof(EsperaCandidato));
                     }
                 }
@@ -70,18 +73,28 @@ namespace ClubeSocial.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Socio")]
-        public IActionResult Socio()
+        [Authorize(Roles = "Clube")]
+        public async Task<IActionResult> AtualizarCondidatoSocio(int id)
         {
-            return View();
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Socio")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Socio(Socio modal)
-        {
-            return View();
+            var candidato = _candidatoRepository.BuscaCandidatoPorId(id);
+            var usuario = await _userManager.FindByEmailAsync(candidato.Email);
+            if (usuario != null)
+            {
+                await _userManager.RemoveFromRolesAsync(usuario, new string[] { "Candidato" });
+                await _userManager.AddToRoleAsync(usuario, "Socio");
+                candidato.Situacao = Situacao.Aprovado;
+                _candidatoRepository.Update(candidato);
+                var socio = new Socio
+                {
+                    Nome = candidato.Nome,
+                    DataNacimento = candidato.DataNacimento,
+                    Email = candidato.Email,
+                    Pelido = candidato.Pelido
+                };
+                _socioRepository.Add(socio);
+                return Json(new { mensagem = "Concluindo" });
+            }
+            return Json(new { mensagem = "Erro" });
         }
     }
 }

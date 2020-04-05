@@ -1,0 +1,81 @@
+﻿@model IEnumerable<ClubeSocial.Models.Candidato>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 class="text-center">Lista de Candidato para se aceitor</h1>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CandidatoId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Situacao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Pelido)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataNacimento)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="conteinerTBody">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CandidatoId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Situacao)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Pelido)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataNacimento)
+                </td>
+                <td>
+                    <button class="btn btn-block btn-primary" data-candidatoId="@item.CandidatoId">Aceitar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts{
+    <script>
+        document.getElementById('conteinerTBody')
+            .addEventListener('click', async (event) => {
+                const element = event.target;
+                if (element.LocaNome = 'button') {
+                    const id = element.dataset.candidatoid;
+                    await BuscaAtualizar(id);
+                    element.parentNode.remove();
+                }
+            });
+
+        async function BuscaAtualizar(id) {
+            if (id != null || id != undefined) {
+                const result = await $.getJSON('/Socio/AtualizarCondidatoSocio', { id: id }, result => result);
+                alert(result.mensagem);
+            }
+        }
+    </script>
+}

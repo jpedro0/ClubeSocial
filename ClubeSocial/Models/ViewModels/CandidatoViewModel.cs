@@ -11,6 +11,7 @@ namespace ClubeSocial.Models.ViewModels
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Nova senha")]
+        [StringLength(100, ErrorMessage = "no minimo 5 caractere.", MinimumLength = 5)]
         public string Senha { get; set; }
         [DataType(DataType.Password)]
         [Display(Name = "Confimar Senha", Prompt = "*******")]

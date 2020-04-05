@@ -8,6 +8,7 @@ namespace ClubeSocial.Models
     public class Clube
     {
         public int ClubeId { get; set; }
+        public string Email { get; set; }
         public string Nome { get; set; }
         public string Decricao { get; set; }
         public DateTime DataCadastro { get; set; }

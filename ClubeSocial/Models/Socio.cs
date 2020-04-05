@@ -8,7 +8,6 @@ namespace ClubeSocial.Models
     public class Socio: Pessoa
     {
         public int SocioId { get; set; }
-        public int CartaoId { get; set; }
         public Cartao Cartao { get; set; }
         public IList<Dependente> Dependentes { get; set; }
         public IList<Mensalidade> Mensalidades { get; set; }

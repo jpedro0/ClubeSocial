@@ -17,6 +17,7 @@ namespace ClubeSocial.Migrations
                 {
                     ClubeId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(nullable: true),
                     Nome = table.Column<string>(nullable: false),
                     Decricao = table.Column<string>(nullable: false),
                     DataCadastro = table.Column<DateTime>(nullable: false)
@@ -33,6 +34,7 @@ namespace ClubeSocial.Migrations
                 {
                     FuncionarioId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(nullable: false),
                     Nome = table.Column<string>(nullable: false),
                     Pelido = table.Column<string>(nullable: true),
                     DataNacimento = table.Column<DateTime>(nullable: false)
@@ -55,6 +57,23 @@ namespace ClubeSocial.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Role", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Socios",
+                schema: "ClubeDB",
+                columns: table => new
+                {
+                    SocioId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(nullable: false),
+                    Nome = table.Column<string>(nullable: false),
+                    Pelido = table.Column<string>(nullable: true),
+                    DataNacimento = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Socios", x => x.SocioId);
                 });
 
             migrationBuilder.CreateTable(
@@ -88,44 +107,20 @@ namespace ClubeSocial.Migrations
                 schema: "ClubeDB",
                 columns: table => new
                 {
-                    ClubeId = table.Column<int>(nullable: false)
+                    CandidatoId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(nullable: false),
                     Nome = table.Column<string>(nullable: false),
                     Pelido = table.Column<string>(nullable: true),
                     DataNacimento = table.Column<DateTime>(nullable: false),
                     Situacao = table.Column<int>(nullable: false),
-                    ClubeId1 = table.Column<int>(nullable: false)
+                    ClubeId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Candidatos", x => x.ClubeId);
+                    table.PrimaryKey("PK_Candidatos", x => x.CandidatoId);
                     table.ForeignKey(
-                        name: "FK_Candidatos_Clubes_ClubeId1",
-                        column: x => x.ClubeId1,
-                        principalSchema: "ClubeDB",
-                        principalTable: "Clubes",
-                        principalColumn: "ClubeId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Cartoes",
-                schema: "ClubeDB",
-                columns: table => new
-                {
-                    NumeroDoCartao = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nome = table.Column<string>(nullable: false),
-                    ClubeId = table.Column<int>(nullable: false),
-                    DataVencimento = table.Column<DateTime>(nullable: false),
-                    Valido = table.Column<bool>(nullable: false),
-                    SocioId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Cartoes", x => x.NumeroDoCartao);
-                    table.ForeignKey(
-                        name: "FK_Cartoes_Clubes_ClubeId",
+                        name: "FK_Candidatos_Clubes_ClubeId",
                         column: x => x.ClubeId,
                         principalSchema: "ClubeDB",
                         principalTable: "Clubes",
@@ -153,6 +148,91 @@ namespace ClubeSocial.Migrations
                         principalSchema: "ClubeDB",
                         principalTable: "Role",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Cartoes",
+                schema: "ClubeDB",
+                columns: table => new
+                {
+                    CartaoId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NumeroDoCartao = table.Column<int>(nullable: false),
+                    Nome = table.Column<string>(nullable: false),
+                    ClubeId = table.Column<int>(nullable: false),
+                    DataVencimento = table.Column<DateTime>(nullable: false),
+                    Valido = table.Column<bool>(nullable: false),
+                    SocioId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cartoes", x => x.CartaoId);
+                    table.ForeignKey(
+                        name: "FK_Cartoes_Clubes_ClubeId",
+                        column: x => x.ClubeId,
+                        principalSchema: "ClubeDB",
+                        principalTable: "Clubes",
+                        principalColumn: "ClubeId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Cartoes_Socios_SocioId",
+                        column: x => x.SocioId,
+                        principalSchema: "ClubeDB",
+                        principalTable: "Socios",
+                        principalColumn: "SocioId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Dependetes",
+                schema: "ClubeDB",
+                columns: table => new
+                {
+                    DependenteId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(nullable: false),
+                    Nome = table.Column<string>(nullable: false),
+                    Pelido = table.Column<string>(nullable: true),
+                    DataNacimento = table.Column<DateTime>(nullable: false),
+                    SocioId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Dependetes", x => x.DependenteId);
+                    table.ForeignKey(
+                        name: "FK_Dependetes_Socios_SocioId",
+                        column: x => x.SocioId,
+                        principalSchema: "ClubeDB",
+                        principalTable: "Socios",
+                        principalColumn: "SocioId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Mensalidades",
+                schema: "ClubeDB",
+                columns: table => new
+                {
+                    MensalidadeId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DataMensalidade = table.Column<DateTime>(nullable: false),
+                    DataVencimento = table.Column<DateTime>(nullable: false),
+                    DataPagamento = table.Column<DateTime>(nullable: false),
+                    Valor = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    Juros = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    Pago = table.Column<bool>(nullable: false),
+                    SocioId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Mensalidades", x => x.MensalidadeId);
+                    table.ForeignKey(
+                        name: "FK_Mensalidades_Socios_SocioId",
+                        column: x => x.SocioId,
+                        principalSchema: "ClubeDB",
+                        principalTable: "Socios",
+                        principalColumn: "SocioId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -251,80 +331,6 @@ namespace ClubeSocial.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Socios",
-                schema: "ClubeDB",
-                columns: table => new
-                {
-                    SocioId = table.Column<int>(nullable: false),
-                    Nome = table.Column<string>(nullable: false),
-                    Pelido = table.Column<string>(nullable: true),
-                    DataNacimento = table.Column<DateTime>(nullable: false),
-                    CartaoId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Socios", x => x.SocioId);
-                    table.ForeignKey(
-                        name: "FK_Socios_Cartoes_SocioId",
-                        column: x => x.SocioId,
-                        principalSchema: "ClubeDB",
-                        principalTable: "Cartoes",
-                        principalColumn: "NumeroDoCartao",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Dependetes",
-                schema: "ClubeDB",
-                columns: table => new
-                {
-                    SocioId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nome = table.Column<string>(nullable: false),
-                    Pelido = table.Column<string>(nullable: true),
-                    DataNacimento = table.Column<DateTime>(nullable: false),
-                    SocioId1 = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Dependetes", x => x.SocioId);
-                    table.ForeignKey(
-                        name: "FK_Dependetes_Socios_SocioId1",
-                        column: x => x.SocioId1,
-                        principalSchema: "ClubeDB",
-                        principalTable: "Socios",
-                        principalColumn: "SocioId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Mensalidades",
-                schema: "ClubeDB",
-                columns: table => new
-                {
-                    MensalidadeId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DataMensalidade = table.Column<DateTime>(nullable: false),
-                    DataVencimento = table.Column<DateTime>(nullable: false),
-                    DataPagamento = table.Column<DateTime>(nullable: false),
-                    Valor = table.Column<decimal>(nullable: false),
-                    Juros = table.Column<decimal>(nullable: false),
-                    Pago = table.Column<bool>(nullable: false),
-                    SocioId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Mensalidades", x => x.MensalidadeId);
-                    table.ForeignKey(
-                        name: "FK_Mensalidades_Socios_SocioId",
-                        column: x => x.SocioId,
-                        principalSchema: "ClubeDB",
-                        principalTable: "Socios",
-                        principalColumn: "SocioId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "HistoriosFuncionarios",
                 schema: "ClubeDB",
                 columns: table => new
@@ -353,10 +359,10 @@ namespace ClubeSocial.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Candidatos_ClubeId1",
+                name: "IX_Candidatos_ClubeId",
                 schema: "ClubeDB",
                 table: "Candidatos",
-                column: "ClubeId1");
+                column: "ClubeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cartoes_ClubeId",
@@ -365,10 +371,17 @@ namespace ClubeSocial.Migrations
                 column: "ClubeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Dependetes_SocioId1",
+                name: "IX_Cartoes_SocioId",
+                schema: "ClubeDB",
+                table: "Cartoes",
+                column: "SocioId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Dependetes_SocioId",
                 schema: "ClubeDB",
                 table: "Dependetes",
-                column: "SocioId1");
+                column: "SocioId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HistoriosFuncionarios_FuncionarioId",
@@ -436,6 +449,10 @@ namespace ClubeSocial.Migrations
                 schema: "ClubeDB");
 
             migrationBuilder.DropTable(
+                name: "Cartoes",
+                schema: "ClubeDB");
+
+            migrationBuilder.DropTable(
                 name: "Dependetes",
                 schema: "ClubeDB");
 
@@ -464,6 +481,10 @@ namespace ClubeSocial.Migrations
                 schema: "ClubeDB");
 
             migrationBuilder.DropTable(
+                name: "Clubes",
+                schema: "ClubeDB");
+
+            migrationBuilder.DropTable(
                 name: "Funcionarios",
                 schema: "ClubeDB");
 
@@ -481,14 +502,6 @@ namespace ClubeSocial.Migrations
 
             migrationBuilder.DropTable(
                 name: "Socios",
-                schema: "ClubeDB");
-
-            migrationBuilder.DropTable(
-                name: "Cartoes",
-                schema: "ClubeDB");
-
-            migrationBuilder.DropTable(
-                name: "Clubes",
                 schema: "ClubeDB");
         }
     }

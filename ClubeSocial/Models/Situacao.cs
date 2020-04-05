@@ -8,7 +8,6 @@ namespace ClubeSocial.Models
     public enum Situacao
     {
         Avaliacao,
-        Aprovado,
-        Concluido
+        Aprovado
     }
 }
