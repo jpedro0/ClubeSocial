@@ -13,12 +13,14 @@
                     <span class="input-group-text" id="basic-addon1">Login</span>
                 </div>
                 <input asp-for="Login.Login" class="form-control" aria-label="Login" aria-describedby="basic-addon1" placeholder="Email" required />
+                <span asp-validation-for="Login.Login" class="text-danger"></span>
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon2">Senha</span>
                 </div>
                 <input asp-for="Login.Senha" class="form-control" placeholder="Senha" aria-label="Senha" aria-describedby="basic-addon2" required>
+                <span asp-validation-for="Login.Senha" class="text-danger"></span>
             </div>
             <h3 class="text-center login-title">Nova Senha</h3>
             <div class="input-group mb-3">
@@ -26,12 +28,14 @@
                     <span class="input-group-text" id="basic-addon2">Nova Senha</span>
                 </div>
                 <input asp-for="NovaSenha" class="form-control" placeholder="Senha" aria-label="Senha" aria-describedby="basic-addon2" required>
+                <span asp-validation-for="NovaSenha" class="text-danger"></span>
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon2">Nova Senha Confimar</span>
                 </div>
                 <input asp-for="NovaSenhaConfimar" class="form-control" placeholder="Senha" aria-label="Senha" aria-describedby="basic-addon2" required>
+                <span asp-validation-for="NovaSenhaConfimar" class="text-danger"></span>
             </div>
             <button class="btn btn-lg btn-primary btn-block" type="submit">
                 Troca de Senha
@@ -40,3 +44,6 @@
     </div>
 </div>
 
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

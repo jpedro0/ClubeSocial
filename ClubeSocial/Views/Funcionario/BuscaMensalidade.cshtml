@@ -4,15 +4,20 @@
     ViewData["Title"] = "BuscaMensalidade";
 }
 
-<h1>BuscaMensalidade</h1>
-
+<h1 class="text-center">Busca Mensalidade</h1>
+<br />
+<hr />
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Index">Voltar para Lista</a>
 </p>
-<div>
-    <input type="number" name="numeroCartao" id="numeroCartao" />
-    <button id="Enviar">Enviar</button>
+<div class="row">
+    <div class="col offset-3">
+        <input type="number" class="form-control" name="numeroCartao" id="numeroCartao" />
+    </div>
+   
+    <div class="col"><button id="Enviar" class="btn btn-primary">Busca</button></div>
 </div>
+<br />
 @if (Model != null && Model.Socio != null && Model.Socio.Mensalidades.Any())
 {
     <table class="table">
@@ -68,7 +73,7 @@
                         @Html.DisplayFor(modelItem => item.Pago)
                     </td>
                     <td>
-                        <button class="btn btn-block btn-primary" data-socioid="@item.SocioId">Quitar Mensalidade</button>
+                        <button class="btn btn-block btn-primary" data-mensalidadeid="@item.MensalidadeId">Quitar Mensalidade</button>
                     </td>
                 </tr>
             }
@@ -81,7 +86,7 @@
             .addEventListener('click', async (event) => {
                 const numeroCartao = document.getElementById('numeroCartao').value;
                 if (numeroCartao != null || numeroCartao != undefined) {
-                    window.location.href = `Funcionario/BuscaMensalidade?numeroCartao=${numeroCartao}`;
+                    window.location.href = `/Funcionario/BuscaMensalidade?numeroCartao=${numeroCartao}`;
                 }
             });
 
@@ -89,7 +94,7 @@
             .addEventListener('click', async (event) => {
                 const element = event.target;
                 if (element.LocaNome = 'button') {
-                    const id = element.dataset.socioid;
+                    const id = element.dataset.mensalidadeid;
                     await BuscaAtualizar(id);
                     element.parentNode.remove();
                 }

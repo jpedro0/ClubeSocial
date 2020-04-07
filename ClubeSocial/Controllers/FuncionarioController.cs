@@ -54,15 +54,7 @@ namespace ClubeSocial.Controllers
             {
                 await _userManager.RemoveClaimAsync(usuario, new Claim("socio", "andamento"));
                 await _userManager.AddClaimAsync(usuario, new Claim("socio", "dependentes"));
-                Cartao cartao = new Cartao
-                {
-                    NumeroDoCartao = 345344553,
-                    Nome = socio.Nome,
-                    ClubeId = 1,
-                    DataVencimento = DateTime.Now,
-                    Valido = true,
-                    SocioId = socio.SocioId
-                };
+                Cartao cartao = new Cartao().CreateCartao(socio);
                 _cartaoRepository.Add(cartao);
                 return Json(new { mensagem = "Concluindo" });
             }
@@ -77,22 +69,7 @@ namespace ClubeSocial.Controllers
             var usuario = await _userManager.FindByEmailAsync(socio.Email);
             if (usuario != null)
             {
-                Mensalidade mensalidade = new Mensalidade
-                {
-                    DataMensalidade = DateTime.Now,
-                    DataVencimento = DateTime.Now,
-                    Valor = 200,
-                    Pago = false,
-                    SocioId = socio.SocioId,
-                    HistorioFuncionarios = new HistorioFuncionario[] 
-                    {
-                        new HistorioFuncionario
-                        {
-                            Descricao = "Criacao da Mensalidade",
-                            Funcionario = funcionario
-                        },
-                    }
-                };
+                Mensalidade mensalidade = new Mensalidade().CreateMensalidade(funcionario, socio);
                 _mensalidadeRepository.Add(mensalidade);
                 return Json(new { mensagem = "Concluindo" });
             }
@@ -101,8 +78,8 @@ namespace ClubeSocial.Controllers
 
         public IActionResult BuscaMensalidade(int? numeroCartao = null)
         {
-            Cartao cartao;
-            if (true)
+            Cartao cartao = null;
+            if (numeroCartao.HasValue)
                 cartao = _cartaoRepository.BuscaCartaoPorNumeroCartao(numeroCartao.Value);
 
             return View(cartao);
@@ -116,10 +93,13 @@ namespace ClubeSocial.Controllers
             if (mensalidade != null)
             {
                 mensalidade.Pago = true;
-                mensalidade.HistorioFuncionarios.Add(new HistorioFuncionario 
+                mensalidade.CalcularJutos();
+                mensalidade.HistorioFuncionarios.Add(
+                new HistorioFuncionario 
                 {
                     Descricao = "Mensalidade Paga",
-                    Funcionario = funcionario
+                    Funcionario = funcionario,
+                    Mensalidade = mensalidade
                 });
                 _mensalidadeRepository.Update(mensalidade);
                 return Json(new { mensagem = "Concluindo" });

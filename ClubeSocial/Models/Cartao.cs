@@ -16,5 +16,18 @@ namespace ClubeSocial.Models
         public bool Valido { get; set; }
         public int SocioId { get; set; }
         public Socio Socio { get; set; }
+
+        public Cartao CreateCartao(Socio socio)
+        {
+            return new Cartao
+            {
+                NumeroDoCartao = new Random().Next(10000, 99999),
+                Nome = socio.Nome,
+                ClubeId = 1,
+                DataVencimento = DateTime.Now.AddDays(300),
+                Valido = true,
+                SocioId = socio.SocioId
+            };
+        }
     }
 }

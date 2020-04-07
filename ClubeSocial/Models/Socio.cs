@@ -11,10 +11,18 @@ namespace ClubeSocial.Models
         public Cartao Cartao { get; set; }
         public IList<Dependente> Dependentes { get; set; }
         public IList<Mensalidade> Mensalidades { get; set; }
-    
-        public void BuscaSocioPorNumeroDoCartao()
-        {
+        public DateTime DataCadastro { get; set; }
 
+        public Socio CreateSocio(Candidato candidato)
+        {
+            return new Socio
+            {
+                Nome = candidato.Nome,
+                DataNacimento = candidato.DataNacimento,
+                Email = candidato.Email,
+                Pelido = candidato.Pelido,
+                DataCadastro = DateTime.Now
+            };
         }
     }
 }

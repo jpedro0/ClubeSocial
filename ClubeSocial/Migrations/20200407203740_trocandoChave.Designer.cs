@@ -4,14 +4,16 @@ using ClubeSocial.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ClubeSocial.Migrations
 {
     [DbContext(typeof(ClubeDBContext))]
-    partial class ClubeDBContextModelSnapshot : ModelSnapshot
+    [Migration("20200407203740_trocandoChave")]
+    partial class trocandoChave
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -239,9 +241,6 @@ namespace ClubeSocial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DataNacimento")
                         .HasColumnType("datetime2");

@@ -37,10 +37,10 @@ namespace ClubeSocial.Controllers
         {
             var usuario = await _userManager.GetUserAsync(User);
             var claims = await _userManager.GetClaimsAsync(usuario);
-            if (claims.Any(p => p.Equals(new Claim("socio", "andamento"))))
-                return View(nameof(SocioAndamento));
-            else if (claims.Any(p => p.Equals(new Claim("socio", "dependentes"))))
-                return View(nameof(ListarDependente));
+            if (claims.Any(p => p.Type == "socio"  && p.Value == "andamento" ))
+                return RedirectToAction(nameof(SocioAndamento));
+            else if (claims.Any(p => p.Type == "socio" && p.Value == "dependentes"))
+                return RedirectToAction(nameof(ListarDependente));
 
             return View();
         }
@@ -64,6 +64,28 @@ namespace ClubeSocial.Controllers
 
         [HttpGet]
         [Authorize(Policy = "Associar Dependente")]
+        public async Task<IActionResult> ConcluirDependente() 
+        {
+            var usuario = await _userManager.GetUserAsync(User);
+            var socio = _socioRepository.BuscaSocioPorEmail(usuario.Email);
+            await _userManager.RemoveClaimAsync(usuario, new Claim("socio", "dependentes"));
+            return RedirectToAction(nameof(Index));
+        }
+        
+        [HttpGet]
+        [Authorize(Policy = "Associar Dependente")]
+        public IActionResult ExcluirDependente(int id) 
+        {
+            if (ModelState.IsValid)
+            {
+                _dependenteRepository.Remove(id);
+                return RedirectToAction(nameof(ListarDependente));
+            }
+            return RedirectToAction(nameof(ListarDependente));
+        }
+        
+        [HttpGet]
+        [Authorize(Policy = "Associar Dependente")]
         public IActionResult AssociarDependente() 
         {
             return View();
@@ -72,13 +94,17 @@ namespace ClubeSocial.Controllers
         [HttpPost]
         [Authorize(Policy = "Associar Dependente")]
         [ValidateAntiForgeryToken]
-        public IActionResult AssociarDependente(Dependente dependente)
+        public async Task<IActionResult> AssociarDependente(Dependente dependente)
         {
             if (ModelState.IsValid)
             {
+                var usuario = await _userManager.GetUserAsync(User);
+                var socio = _socioRepository.BuscaSocioPorEmail(usuario.Email);
+                dependente.Socio = socio;
                 _dependenteRepository.Add(dependente);
+                return RedirectToAction(nameof(ListarDependente));
             }
-            return View(nameof(ListarDependente));
+            return View(dependente);
         }
 
         [HttpGet]
@@ -101,15 +127,17 @@ namespace ClubeSocial.Controllers
                 var usuario = await _userManager.FindByEmailAsync(model.Candidato.Email);
                 if (usuario == null)
                 {
-                    _candidatoRepository.Add(model.Candidato);
+                    
                     IdentityResult result = await _userManager.CreateAsync(user, model.Senha);
                     if (result.Succeeded)
                     {
+                        _candidatoRepository.Add(model.Candidato);
                         await _userManager.AddToRoleAsync(user, "Candidato");
                         return RedirectToAction(nameof(EsperaCandidato));
                     }
+                    ModelState.AddModelError(String.Empty, "Nome Invalido!");
                 }
-                ModelState.AddModelError("", "Email ou Senha Invalido!");
+                ModelState.AddModelError(String.Empty, "Email ou Senha Invalido!");
             }
             return View();
         }
@@ -127,13 +155,7 @@ namespace ClubeSocial.Controllers
                 await _userManager.AddClaimAsync(usuario, new Claim("socio", "andamento"));
                 candidato.Situacao = Situacao.Aprovado;
                 _candidatoRepository.Update(candidato);
-                var socio = new Socio
-                {
-                    Nome = candidato.Nome,
-                    DataNacimento = candidato.DataNacimento,
-                    Email = candidato.Email,
-                    Pelido = candidato.Pelido
-                };
+                Socio socio = new Socio().CreateSocio(candidato);
                 _socioRepository.Add(socio);
                 return Json(new { mensagem = "Concluindo" });
             }

@@ -7,6 +7,7 @@ namespace ClubeSocial.Models
 {
     public class HistorioFuncionario
     {
+        public int HistorioFuncionarioId { get; set; }
         public string Descricao { get; set; }
 
         public int MensalidadeId { get; set; }

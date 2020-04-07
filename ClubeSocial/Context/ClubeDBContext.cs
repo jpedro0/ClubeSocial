@@ -57,7 +57,10 @@ namespace ClubeSocial.Context
             builder.Entity<Funcionario>().Property(p => p.DataNacimento).IsRequired();
 
             builder.Entity<HistorioFuncionario>().ToTable("HistoriosFuncionarios", "ClubeDB");
-            builder.Entity<HistorioFuncionario>().HasKey(mf => new { mf.MensalidadeId, mf.FuncionarioId });
+            builder.Entity<HistorioFuncionario>().HasKey(p => p.HistorioFuncionarioId);
+            builder.Entity<HistorioFuncionario>().HasOne(p => p.Mensalidade).WithMany(p => p.HistorioFuncionarios);
+            builder.Entity<HistorioFuncionario>().HasOne(p => p.Funcionario).WithMany(p => p.HistorioFuncionarios);
+            builder.Entity<HistorioFuncionario>().Property(p => p.Descricao).HasColumnType("nvarchar(MAX)").IsRequired();
 
             builder.Entity<Mensalidade>().ToTable("Mensalidades", "ClubeDB");
             builder.Entity<Mensalidade>().HasKey(p => p.MensalidadeId);
@@ -72,6 +75,7 @@ namespace ClubeSocial.Context
             builder.Entity<Socio>().HasKey(p => p.SocioId);
             builder.Entity<Socio>().Property(p => p.Nome).IsRequired();
             builder.Entity<Socio>().Property(p => p.DataNacimento).IsRequired();
+            builder.Entity<Socio>().Property(p => p.DataCadastro).IsRequired();
             builder.Entity<Socio>().HasOne(p => p.Cartao).WithOne(p => p.Socio).HasForeignKey<Cartao>(p => p.SocioId);
 
             base.OnModelCreating(builder);

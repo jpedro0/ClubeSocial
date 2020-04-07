@@ -24,6 +24,11 @@ namespace ClubeSocial.Controllers
         [HttpGet]
         public async Task<IActionResult> Login()
         {
+            if (_signInManager.IsSignedIn(User))
+            {
+                var usuario = await _userManager.GetUserAsync(User);
+                return await ValidaConta(usuario);
+            }
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
             return View();
         }

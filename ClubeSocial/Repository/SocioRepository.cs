@@ -37,7 +37,8 @@ namespace ClubeSocial.Repository
         {
             return DbSet
                 .Include(p => p.Mensalidades)
-                .Where(p => !p.Mensalidades.Any(p => p.DataMensalidade.Month.Equals(DateTime.Now.Month)))
+                .Where(p => !p.Mensalidades.Any(p => p.DataMensalidade.Date == DateTime.Now.Date) &&
+                    p.Dependentes.Any() && p.Cartao != null)
                 .ToList();
         }
     }

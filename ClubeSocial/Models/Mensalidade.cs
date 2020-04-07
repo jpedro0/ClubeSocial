@@ -18,7 +18,31 @@ namespace ClubeSocial.Models
 
         public void CalcularJutos()
         {
+            if (DateTime.Now.Date >= DataVencimento.Date)
+            {
+                Juros = (DateTime.Now.Day - DataVencimento.Day) * 200;
+                Valor += Juros;
+            }
+        }
 
+        public Mensalidade CreateMensalidade(Funcionario funcionario, Socio socio)
+        {
+            return new Mensalidade
+            {
+                DataMensalidade = DateTime.Now,
+                DataVencimento = DateTime.Now.AddDays(150),
+                Valor = 200,
+                Pago = false,
+                SocioId = socio.SocioId,
+                HistorioFuncionarios = new HistorioFuncionario[]
+                {
+                    new HistorioFuncionario
+                    {
+                        Descricao = "Criacao da Mensalidade",
+                        Funcionario = funcionario
+                    },
+                }
+            };
         }
     }
 }

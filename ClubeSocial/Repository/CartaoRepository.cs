@@ -18,6 +18,7 @@ namespace ClubeSocial.Repository
         public Cartao BuscaCartaoPorNumeroCartao(int numeroCartao)
         {
             return DbSet
+                .AsNoTracking()
                 .Include(p => p.Socio)
                 .ThenInclude(p => p.Mensalidades)
                 .FirstOrDefault(p => p.NumeroDoCartao == numeroCartao);

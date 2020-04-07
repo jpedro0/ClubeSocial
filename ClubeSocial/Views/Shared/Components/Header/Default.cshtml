@@ -1,0 +1,26 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<IdentityUser> _signInManager;
+
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ClubeSocial</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                <ul class="navbar-nav flex-grow-1">
+                    @if (_signInManager.IsSignedIn(User))
+                    {
+                        <li class="nav-item">
+                            <form id="logoutForm" method="post" asp-action="Logout" asp-controller="Conta" asp-route-returnUrl="@ViewData["ReturnUrl"]" class="search-form">
+                                <a id="loginLink" href="javascript:document.getElementById('logoutForm').submit()" class="nav-link text-dark"> Sair</a>
+                            </form>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

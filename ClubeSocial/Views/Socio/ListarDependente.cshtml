@@ -1,0 +1,80 @@
+﻿@model IEnumerable<ClubeSocial.Models.Dependente>
+
+@{
+    ViewData["Title"] = "ListarDependente";
+}
+
+<h1 class="text-center">Listar Dependente</h1>
+<h2>Por favor para concluir o seu cadastro informe os seus dependentes</h2>
+<br />
+<hr />
+<div class="row">
+    <div class="col-4 offset-2">
+        <a asp-action="AssociarDependente" class="btn btn-primary btn-lg col">Adicionar Dependente</a>
+    </div>
+    @if (Model.Any())
+    {
+        <div class="col-4">
+            <a asp-action="ConcluirDependente" class="btn btn-success btn-lg col">Concluir Cadastro</a>
+        </div>
+    }
+</div>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DependenteId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SocioId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Pelido)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataNacimento)
+            </th>
+            <th>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DependenteId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SocioId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nome)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Pelido)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DataNacimento)
+                    </td>
+                    <td>
+                        <a asp-action="ExcluirDependente" asp-route-id="@item.DependenteId" class="btn btn-danger btn-lg">Excluir</a>
+                    </td>
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>
