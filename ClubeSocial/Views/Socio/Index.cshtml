@@ -1,13 +1,30 @@
-﻿
+﻿@model Socio 
 @{
     ViewData["Title"] = "Index";
 }
 
-    <h1 class="text-center">Cadastro de Socio concluindo com sucesso</h1>
-<div class="alert alert-success" role="alert">
-    <h4 class="alert-heading">Bem Vindo ao Clube Social</h4>
-    <p>Parabéns</p>
-    <hr>
-    <p class="mb-0">Atenciosamente, Clube Social.</p>
+<h1 class="text-center">Cadastro de Socio concluindo com sucesso</h1>
+<br />
+<div class="row">
+    <div class="col-7">
+        <div class="alert alert-success shadow" role="alert">
+            <h4 class="alert-heading">Bem Vindo ao Clube Social</h4>
+            <p>Parabéns</p>
+            <hr>
+            <p class="mb-0">Atenciosamente, Clube Social.</p>
+        </div>
+    </div>
+    <div class="col-5">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title">CARTÃO DE SOCIO</h5>
+                <hr>
+                <p class="card-text">NUMERO DO CARTÃO: @Model.Cartao.NumeroDoCartao</p>
+                <p class="card-text">VALIDACÃO: @(Model.Cartao.Valido?"SIM":"NÃO")</p>
+                <p class="card-text">DATA VENCIMENTO: @Model.Cartao.DataVencimento.ToShortDateString()</p>
+            </div>
+        </div>
+    </div>
 </div>
+
 

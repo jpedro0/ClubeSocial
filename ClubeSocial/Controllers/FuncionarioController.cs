@@ -56,7 +56,7 @@ namespace ClubeSocial.Controllers
                 await _userManager.AddClaimAsync(usuario, new Claim("socio", "dependentes"));
                 Cartao cartao = new Cartao().CreateCartao(socio);
                 _cartaoRepository.Add(cartao);
-                return Json(new { mensagem = "Concluindo" });
+                return Json(new { mensagem = "Concluindo", numeroCartao = $"{cartao.NumeroDoCartao}" });
             }
             return Json(new { mensagem = "Erro" });
         }

@@ -37,12 +37,12 @@ namespace ClubeSocial.Controllers
         {
             var usuario = await _userManager.GetUserAsync(User);
             var claims = await _userManager.GetClaimsAsync(usuario);
-            if (claims.Any(p => p.Type == "socio"  && p.Value == "andamento" ))
+            if (claims.Any(p => p.Type == "socio" && p.Value == "andamento"))
                 return RedirectToAction(nameof(SocioAndamento));
             else if (claims.Any(p => p.Type == "socio" && p.Value == "dependentes"))
                 return RedirectToAction(nameof(ListarDependente));
-
-            return View();
+            var socio = _socioRepository.BuscaSocioPorEmail(usuario.Email);
+            return View(socio);
         }
 
         [HttpGet]
@@ -140,6 +140,22 @@ namespace ClubeSocial.Controllers
                 ModelState.AddModelError(String.Empty, "Email ou Senha Invalido!");
             }
             return View();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Clube")]
+        public async Task<IActionResult> ExcluirCondidato(int id)
+        {
+            var candidato = _candidatoRepository.BuscaCandidatoPorId(id);
+            var usuario = await _userManager.FindByEmailAsync(candidato.Email);
+            if (usuario != null)
+            {
+                await _userManager.RemoveFromRolesAsync(usuario, new string[] { "Candidato" });
+                await _userManager.AddToRoleAsync(usuario, "Reprovado");
+                _candidatoRepository.Remove(candidato);
+                return Json(new { mensagem = "Concluindo" });
+            }
+            return Json(new { mensagem = "Erro" });
         }
 
         [HttpGet]

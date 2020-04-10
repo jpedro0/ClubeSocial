@@ -22,7 +22,9 @@ namespace ClubeSocial.Repository
 
         public Socio BuscaSocioPorEmail(string email)
         {
-            return DbSet.FirstOrDefault(p => p.Email == email);
+            return DbSet
+                .Include(p => p.Cartao)
+                .FirstOrDefault(p => p.Email == email);
         }
 
         public IList<Socio> BuscaSocioPorCartaoNull() 

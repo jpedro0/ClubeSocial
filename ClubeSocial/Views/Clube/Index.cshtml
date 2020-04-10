@@ -67,7 +67,7 @@
                 if (element.LocaNome = 'button') {
                     const id = element.dataset.candidatoid;
                     await BuscaAtualizar(id);
-                    element.parentNode.remove();
+                    element.parentNode.parentNode.remove();
                 }
             });
 
